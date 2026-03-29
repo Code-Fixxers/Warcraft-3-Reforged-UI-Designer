@@ -30,8 +30,14 @@
           sed -i "s|from './Editor/Menus/contextMenu'|from './Editor/Menus/ContextMenu'|" src/ts/main.ts
           sed -i "s|from './Events/keyboardShortcuts'|from './Events/KeyboardShortcuts'|" src/ts/renderer.ts
 
+          # Fix preload path: Electron 10+ requires absolute fs path, not file:// URL
+          sed -i "s|preload: 'file://' + __dirname + 'preload.js'|preload: __dirname + '/preload.js'|" src/ts/main.ts
+
           # Stub for gitignored analytics config
           echo 'export default { namespace: "", key: "" };' > src/ts/configMain.ts
+
+          # Disable analytics fetch (countapi.xyz is dead)
+          sed -i 's|fetch(`https://api.countapi|// fetch(`https://api.countapi|' src/ts/main.ts
         '';
 
         # Override build — upstream npm scripts use Windows-specific commands
